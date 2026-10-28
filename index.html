@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#1b1f2e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Zombiler dünyayı ele geçirdi! Tuğra kamyonuyla zombileri ezerek 10 gün içinde son vapura yetişmeli.">
+  <title>Tuğra: Son Vapur</title>
+  <link rel="icon" href="img/ikon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/stil.css">
+</head>
+<body>
+  <!-- Oyunun çizildiği tuval -->
+  <canvas id="oyun"></canvas>
+
+  <!-- Oyun içi üst butonlar -->
+  <div id="ustButonlar" class="oyun-ici">
+    <button id="btnDuraklat" class="yuvarlak" aria-label="Duraklat">❚❚</button>
+    <button id="btnSes" class="yuvarlak" aria-label="Ses aç/kapat">🔊</button>
+  </div>
+
+  <!-- Dokunmatik kontroller (telefon / tablet) -->
+  <div id="dokunmatik" class="oyun-ici">
+    <div class="kume sol">
+      <button class="tus kucuk" data-tus="arka" aria-label="Arka tekerin üstüne kalk">
+        <svg viewBox="0 0 60 40"><g transform="rotate(-22 14 32)"><rect x="6" y="14" width="40" height="12" rx="3" fill="#fff"/><circle cx="14" cy="30" r="6" fill="#fff"/><circle cx="38" cy="30" r="6" fill="#fff"/></g></svg>
+        <span>ARKA TEKER</span>
+      </button>
+      <button class="tus pedal fren" data-tus="fren" aria-label="Fren">
+        <svg viewBox="0 0 40 40"><path d="M26 8 L12 20 L26 32" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>FREN</span>
+      </button>
+    </div>
+    <div class="kume sag">
+      <button class="tus kucuk" data-tus="on" aria-label="Ön tekerin üstüne kalk">
+        <svg viewBox="0 0 60 40"><g transform="rotate(22 46 32)"><rect x="14" y="14" width="40" height="12" rx="3" fill="#fff"/><circle cx="22" cy="30" r="6" fill="#fff"/><circle cx="46" cy="30" r="6" fill="#fff"/></g></svg>
+        <span>ÖN TEKER</span>
+      </button>
+      <button class="tus pedal gaz" data-tus="gaz" aria-label="Gaz">
+        <svg viewBox="0 0 40 40"><path d="M14 8 L28 20 L14 32" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>GAZ</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Gün başlangıç kartı -->
+  <div id="gunKarti" class="gizli">
+    <div id="kartGun">1. GÜN</div>
+    <div id="kartAd">Şehir Merkezi</div>
+    <div id="kartAlt"></div>
+  </div>
+
+  <!-- Telefon dik tutulursa uyarı -->
+  <div id="donCevir">
+    <div class="telefon"></div>
+    <p>Daha iyi oynamak için telefonu <b>yan çevir</b></p>
+    <button id="btnDonKapat" class="btn kucuk">Böyle oyna</button>
+  </div>
+
+  <!-- ===== ANA MENÜ ===== -->
+  <div id="ekranMenu" class="ekran">
+    <div class="panel menu">
+      <h1 class="logo"><span class="isim">TUĞRA</span><span class="alt">SON VAPUR</span></h1>
+      <canvas id="kapakTuval"></canvas>
+      <p class="hikaye">Zombiler dünyayı ele geçirdi! Limandan kalkacak <b>son vapur</b> 10 gün sonra yola çıkıyor.
+        Tuğra kamyonuna atla, zombileri ez, kutulara dikkat et ve vapura yetiş!</p>
+      <div class="butonlar">
+        <button id="btnOyna" class="btn ana">OYNA ▶</button>
+        <button id="btnGarajMenu" class="btn">GARAJ</button>
+        <button id="btnNasil" class="btn">NASIL OYNANIR?</button>
+        <button id="btnTamEkran" class="btn kucuk">⛶ Tam Ekran</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HARİTA (GÜN SEÇİMİ) ===== -->
+  <div id="ekranHarita" class="ekran gizli">
+    <div class="panel genis">
+      <div class="ust-satir">
+        <button id="btnHaritaGeri" class="btn kucuk">◀ Geri</button>
+        <h2>10 GÜN · SON VAPURA YETİŞ</h2>
+        <div class="altin-kutu"><span class="altin-ikon"></span><b id="haritaAltin">0</b></div>
+      </div>
+      <div id="gunler"></div>
+      <div class="butonlar yatay">
+        <button id="btnHaritaGaraj" class="btn">GARAJ (kamyonu güçlendir)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== GARAJ ===== -->
+  <div id="ekranGaraj" class="ekran gizli">
+    <div class="panel genis">
+      <div class="ust-satir">
+        <button id="btnGarajGeri" class="btn kucuk">◀ Geri</button>
+        <h2>GARAJ</h2>
+        <div class="altin-kutu"><span class="altin-ikon"></span><b id="garajAltin">0</b></div>
+      </div>
+      <canvas id="garajTuval"></canvas>
+      <p class="ipucu">Zombi ezdikçe ve günleri bitirdikçe altın kazanırsın. Elensen bile altınlar sende kalır!</p>
+      <div id="yukseltmeler"></div>
+    </div>
+  </div>
+
+  <!-- ===== NASIL OYNANIR ===== -->
+  <div id="ekranNasil" class="ekran gizli">
+    <div class="panel">
+      <h2>NASIL OYNANIR?</h2>
+      <ul class="kurallar">
+        <li><b>Amaç:</b> Her gün hava kararmadan güvenli bölgeye ulaş. 10. günün sonunda limandaki <b>son vapura</b> bin!</li>
+        <li><b>Zombileri ez:</b> Hızlı giderek çarparsan zombiler havaya uçar. Yavaş çarparsan sana saldırırlar.</li>
+        <li><b>Kutular:</b> Kutulara çarpınca kamyon yavaşlar. Üstlerinden atlamayı dene!</li>
+        <li><b>Elenirsen:</b> Kamyon ters dönerse, parçalanırsa ya da süre biterse elenirsin. Süre her denemede yenilenir.</li>
+      </ul>
+      <div class="tuslar">
+        <div><kbd>→</kbd><kbd>D</kbd><span>Gaz</span></div>
+        <div><kbd>←</kbd><kbd>A</kbd><span>Fren / geri</span></div>
+        <div><kbd>↑</kbd><kbd>B</kbd><span>Arka tekerin üstüne kalk</span></div>
+        <div><kbd>↓</kbd><kbd>N</kbd><span>Ön tekerin üstüne kalk</span></div>
+        <div><kbd>P</kbd><span>Duraklat</span></div>
+      </div>
+      <p class="ipucu">Telefonda ekrandaki <b>GAZ</b>, <b>FREN</b>, <b>ARKA TEKER</b> ve <b>ÖN TEKER</b> tuşlarını kullan. Havadayken bu tuşlarla kamyonu döndürüp düz inebilirsin.</p>
+      <div class="butonlar yatay">
+        <button id="btnNasilGeri" class="btn ana">ANLADIM</button>
+        <button id="btnSifirla" class="btn kucuk sil">İlerlemeyi sıfırla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DURAKLAT ===== -->
+  <div id="ekranDuraklat" class="ekran gizli">
+    <div class="panel dar">
+      <h2>DURAKLATILDI</h2>
+      <div class="butonlar">
+        <button id="btnDevam" class="btn ana">DEVAM ▶</button>
+        <button id="btnYeniden" class="btn">YENİDEN BAŞLA ↻</button>
+        <button id="btnDurHarita" class="btn">HARİTA</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SONUÇ (gün bitti / elendin / final) ===== -->
+  <div id="ekranSonuc" class="ekran gizli">
+    <div class="panel dar">
+      <h2 id="sonucBaslik" class="baslik">GÜN TAMAM</h2>
+      <p id="sonucMesaj"></p>
+      <div id="sonucSatirlar"></div>
+      <div id="sonucButonlar" class="butonlar"></div>
+    </div>
+  </div>
+
+  <script src="js/yardimci.js"></script>
+  <script src="js/ses.js"></script>
+  <script src="js/arazi.js"></script>
+  <script src="js/araba.js"></script>
+  <script src="js/zombi.js"></script>
+  <script src="js/cizim.js"></script>
+  <script src="js/kontrol.js"></script>
+  <script src="js/oyun.js"></script>
+</body>
+</html>
